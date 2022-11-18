@@ -11,6 +11,8 @@ public class Restaurant {
     private final ArrayList<Table> tables = new ArrayList<>();
     private FileWriter writer;
 
+    private ArrayList<Menu> menu = new ArrayList<>();
+
     public Restaurant(int ID) {
         this.ID = ID;
     }
@@ -60,5 +62,14 @@ public class Restaurant {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public ArrayList<Menu> getMenu(){
+        return menu;
+    }
+
+    public void addMenu (int ID, String category, String item, int price ){
+        menu.add(new Menu(ID, category, item, price));
+
     }
 }
