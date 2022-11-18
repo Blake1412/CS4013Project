@@ -14,6 +14,7 @@ public class Restaurant {
     private String address;
     private String phoneNumber;
     private final ArrayList<Table> tables = new ArrayList<>();
+    private ArrayList<Menu> menu = new ArrayList<>();
     private FileWriter writer;
 
     private static int bookingID = 0;
@@ -117,6 +118,15 @@ public class Restaurant {
             if (table.addBooking(booking)) return true;
         }
         return false;
+    }
+
+    public ArrayList<Menu> getMenu(){
+        return menu;
+    }
+
+    public void addMenu (int ID, String category, String item, int price ){
+        menu.add(new Menu(ID, category, item, price));
+
     }
 
     @Override
