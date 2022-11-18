@@ -1,8 +1,10 @@
+import java.util.ArrayList;
+
 public class Table {
 
     private int ID;
     private int capacity;
-    private Reservation reservation;
+    private final ArrayList<Booking> bookings = new ArrayList<>();
 
     public Table(int ID, int capacity) {
         this.ID = ID;
@@ -25,11 +27,16 @@ public class Table {
         this.capacity = capacity;
     }
 
-    public Reservation getReservation() {
-        return reservation;
+    public ArrayList<Booking> getBookings() {
+        return bookings;
     }
 
-    public void setReservation(Reservation reservation) {
-        this.reservation = reservation;
+    public boolean addBooking(Booking booking) {
+        for (Booking booking1 : bookings) {
+            if (booking1.overlap(booking)) return false;
+        }
+        bookings.add(booking);
+        booking.setTableID(getID());
+        return true;
     }
 }

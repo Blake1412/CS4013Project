@@ -3,16 +3,26 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Restaurant {
     private int ID;
+    private String name;
+    private String address;
+    private String phoneNumber;
     private final ArrayList<Table> tables = new ArrayList<>();
     private FileWriter writer;
 
-    public Restaurant(int ID) {
+    private static int bookingID = 0;
+
+    public Restaurant(int ID, String name, String address, String phoneNumber) {
         this.ID = ID;
+        this.name = name;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
     }
 
     public int getID() {
@@ -21,6 +31,34 @@ public class Restaurant {
 
     public void setID(int ID) {
         this.ID = ID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public static int getBookingID() {
+        return bookingID;
     }
 
     public ArrayList<Table> getTables() {
@@ -60,5 +98,29 @@ public class Restaurant {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean addWalkIn(LocalDate date, LocalTime time, int numberOfPeople) {
+        return addBooking(new WalkIn(date, time, numberOfPeople, getID(), ++bookingID));
+    }
+
+    public boolean addReservation(LocalDate date, LocalTime time, int numberOfPeople, String name, String phoneNumber) {
+        return addBooking(new Reservation(date, time, numberOfPeople, name, phoneNumber, getID(), ++bookingID));
+    }
+
+    public void updateBooking(int bookingID) {
+
+    }
+
+    private boolean addBooking(Booking booking) {
+        for (Table table : tables) {
+            if (table.addBooking(booking)) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s\n%s\n%s\n", getName(), getAddress(), getPhoneNumber());
     }
 }

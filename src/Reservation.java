@@ -2,53 +2,16 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 
-public class Reservation {
-    private LocalDate dateBooked;
-    private LocalTime timeBooked;
-    private int numberOfPeople;
-    private int restaurantID;
+public class Reservation extends Booking {
+
     private String name;
     private String phoneNumber;
 
-    public Reservation(LocalDate DateBooked, LocalTime timeBooked, int numberOfPeople, int restaurantID, String name, String phoneNumber) {
-        this.dateBooked = DateBooked;
-        this.timeBooked = timeBooked;
-        this.numberOfPeople = numberOfPeople;
-        this.restaurantID = restaurantID;
+
+    public Reservation(LocalDate date, LocalTime startTime, int numberOfPeople, String name, String phoneNumber, int restaurantID, int reservationID) {
+        super(date, startTime, numberOfPeople, reservationID, reservationID);
         this.name = name;
         this.phoneNumber = phoneNumber;
-    }
-
-    public LocalDate getDateBooked() {
-        return dateBooked;
-    }
-
-    public void setDateBooked(LocalDate dateBooked) {
-        this.dateBooked = dateBooked;
-    }
-
-    public LocalTime getTimeBooked() {
-        return timeBooked;
-    }
-
-    public void setTimeBooked(LocalTime timeBooked) {
-        this.timeBooked = timeBooked;
-    }
-
-    public int getNumberOfPeople() {
-        return numberOfPeople;
-    }
-
-    public void setNumberOfPeople(int numberOfPeople) {
-        this.numberOfPeople = numberOfPeople;
-    }
-
-    public int getRestaurantID() {
-        return restaurantID;
-    }
-
-    public void setRestaurantID(int restaurantID) {
-        this.restaurantID = restaurantID;
     }
 
     public String getName() {
@@ -65,5 +28,18 @@ public class Reservation {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("""
+                             Date: %s
+                             Time: %s
+                             Number of People: %s
+                             Name: %s
+                             Phone Number: %s
+                             Table number: %d
+                                                          
+                             """, getDate(), getStartTime(), getNumberOfPeople(), getName(), getPhoneNumber(), getTableID());
     }
 }
