@@ -13,7 +13,7 @@ public abstract class Booking {
     public Booking(LocalDate date, LocalTime startTime, int numberOfPeople, int restaurantID, int bookingID) {
         this.date = date;
         this.startTime = startTime;
-        this.endTime = startTime.plusMinutes(90);
+        this.endTime = startTime.plusHours(2);
         this.numberOfPeople = numberOfPeople;
         this.restaurantID = restaurantID;
         this.bookingID = bookingID;
@@ -62,11 +62,6 @@ public abstract class Booking {
 
     public int getBookingID() {
         return bookingID;
-    }
-
-    public boolean overlap(Booking booking) {
-        return booking.getDate().isEqual(getDate()) &&
-               (booking.getStartTime().isBefore(getEndTime())) && getStartTime().isBefore(booking.getEndTime());
     }
 
     @Override

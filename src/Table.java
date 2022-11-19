@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Table {
@@ -31,12 +33,21 @@ public class Table {
         return bookings;
     }
 
-    public boolean addBooking(Booking booking) {
-        for (Booking booking1 : bookings) {
-            if (booking1.overlap(booking)) return false;
+    public boolean addBooking(Booking bookingOne) {
+        for (Booking bookingTwo : bookings) {
+            if (Utils.timeOverlap(bookingOne.getStartTime(), bookingOne.getEndTime(), bookingTwo.getStartTime(), bookingTwo.getEndTime()))
+                return false;
         }
-        bookings.add(booking);
-        booking.setTableID(getID());
+        bookings.add(bookingOne);
+        bookingOne.setTableID(getID());
+        return true;
+    }
+
+    public boolean freeAtTime(LocalDate date, LocalTime time) {
+        for (Booking booking : bookings) {
+            if (booking.getDate().isEqual(date) &&
+                Utils.timeOverlap(time, booking.getStartTime(), time.plusHours(2), booking.getEndTime())) return false;
+        }
         return true;
     }
 }

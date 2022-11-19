@@ -129,6 +129,20 @@ public class Restaurant {
 
     }
 
+    public ArrayList<Integer> getAvailableTimes(LocalDate date, int numberOfPeople) {
+        int i = LocalTime.now().getHour();
+        if (LocalDate.now().isEqual(date) && i < 12) i = 12;
+        ArrayList<Integer> freeHours = new ArrayList<>();
+        while (i <= 20) {
+            LocalTime hour = LocalTime.of(i, 0);
+            for (Table table : tables) {
+                if (table.freeAtTime(date, hour) && numberOfPeople <= table.getCapacity()) freeHours.add(i);
+            }
+            i++;
+        }
+        return freeHours;
+    }
+
     @Override
     public String toString() {
         return String.format("%s\n%s\n%s\n", getName(), getAddress(), getPhoneNumber());
