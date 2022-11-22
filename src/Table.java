@@ -37,10 +37,14 @@ public class Table {
         bookings.add(booking);
     }
 
+    public void removeBooking(Booking booking) {
+        bookings.remove(booking);
+    }
+
     public boolean freeAtTime(LocalDate date, LocalTime time) {
         for (Booking booking : bookings) {
             if (booking.getDate().isEqual(date) &&
-                Utils.timeOverlap(time, booking.getStartTime(), time.plusHours(2), booking.getEndTime())) return false;
+                Utils.timeOverlap(time, time.plusHours(2), booking.getStartTime(), booking.getEndTime())) return false;
         }
         return true;
     }

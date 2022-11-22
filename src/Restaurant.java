@@ -99,23 +99,23 @@ public class Restaurant {
 
     public void addBooking(Booking booking) {
         booking.setBookingID(++bookingID);
-        tables.forEach(table -> {
-            if (table.getID() == booking.getTableID()) {
-                table.addBooking(booking);
-            }
-        });
+        tables.get(booking.getTableID()).addBooking(booking);
     }
 
-    public Booking getBooking(int bookingID) throws BookingNotFoundException {
+    public void removeBooking(Booking booking) {
+        tables.get(booking.getTableID()).removeBooking(booking);
+    }
+
+    public Booking getBooking(int bookingID) throws Exception {
         for (Table table : tables) {
             for (Booking booking : table.getBookings()) {
                 if (booking.getBookingID() == bookingID) return booking;
             }
         }
-        throw new BookingNotFoundException("Error: Could not find a booking with the specified ID");
+        throw new Exception("Error: Could not find a booking with the specified ID");
     }
 
-    public Booking getBooking(LocalDate date, LocalTime time, String phoneNumber) throws BookingNotFoundException {
+    public Booking getBooking(LocalDate date, LocalTime time, String phoneNumber) throws Exception {
         for (Table table : tables) {
             for (Booking booking: table.getBookings()) {
                 if (booking.getDate().isEqual(date) && booking.getStartTime().equals(time) && ((Reservation) booking).getPhoneNumber().equals(phoneNumber)) {
@@ -123,36 +123,41 @@ public class Restaurant {
                 }
             }
         }
-        throw new BookingNotFoundException("Error: Could not find a booking with the specified ID");
+        throw new Exception("Error: Could not find a booking with the specified ID");
     }
 
-    public void updateBooking(int bookingID) {
-
+    public void updateReservation(Reservation oldReservation, Reservation newReservation) {
+        newReservation.setName(oldReservation.getName());
+        newReservation.setPhoneNumber(oldReservation.getPhoneNumber());
+        newReservation.setBookingID(oldReservation.getBookingID());
+        removeBooking(oldReservation);
+        tables.get(newReservation.getTableID()).addBooking(newReservation);
     }
 
     public ArrayList<Reservation> getAvailableReservations(int numberOfPeople) {
         ArrayList<Reservation> availableReservations = new ArrayList<>();
         LocalDate startDate = LocalDate.now();
-        LocalTime startTime = LocalTime.now();
-        if (startTime.getHour() <= 17) {
-            for (int i = Math.max(startTime.getHour(), 12); i <= 20; i++) {
-                for (Table table : tables) {
-                    if (table.freeAtTime(startDate, startTime))
-                        availableReservations.add(new Reservation(startDate, LocalTime.of(i, 0), numberOfPeople, table.getID(), getID()));
-                }
-            }
+        int hour = LocalTime.now().getHour() + 2;
+
+        if (hour >= 20) {
+            startDate = startDate.plusDays(1);
+            hour = 12;
+        } else {
+            hour = Math.max(hour, 12);
         }
-        startDate = startDate.plusDays(1);
-        for (int i = 0; i <= 14; i++) {
-            for (int j = 12; j <= 20; j++) {
-                LocalTime time = LocalTime.of(j, 0);
+        LocalDate endDate = startDate.plusDays(14);
+
+        while (!startDate.isAfter(endDate)) {
+            while (hour <= 20) {
                 for (Table table : tables) {
-                    if (table.freeAtTime(startDate, time)) {
-                        availableReservations.add(new Reservation(startDate, time, numberOfPeople, table.getID(), getID()));
+                    if (table.freeAtTime(startDate, LocalTime.of(hour, 0))) {
+                        availableReservations.add(new Reservation(startDate, LocalTime.of(hour, 0), numberOfPeople, table.getID(), getID()));
                     }
                 }
+                hour++;
             }
             startDate = startDate.plusDays(1);
+            hour = 12;
         }
         return availableReservations;
     }
