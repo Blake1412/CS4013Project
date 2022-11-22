@@ -13,11 +13,11 @@ public class Restaurant {
     private String name;
     private String address;
     private String phoneNumber;
+    private int bookingID = 0;
     private final ArrayList<Table> tables = new ArrayList<>();
     private ArrayList<Menu> menu = new ArrayList<>();
     private FileWriter writer;
 
-    private static int bookingID = 0;
 
     public Restaurant(int ID, String name, String address, String phoneNumber) {
         this.ID = ID;
@@ -56,10 +56,6 @@ public class Restaurant {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public static int getBookingID() {
-        return bookingID;
     }
 
     public ArrayList<Table> getTables() {
@@ -101,46 +97,72 @@ public class Restaurant {
         }
     }
 
-    public boolean addWalkIn(LocalDate date, LocalTime time, int numberOfPeople) {
-        return addBooking(new WalkIn(date, time, numberOfPeople, getID(), ++bookingID));
+    public void addBooking(Booking booking) {
+        booking.setBookingID(++bookingID);
+        tables.forEach(table -> {
+            if (table.getID() == booking.getTableID()) {
+                table.addBooking(booking);
+            }
+        });
     }
 
-    public boolean addReservation(LocalDate date, LocalTime time, int numberOfPeople, String name, String phoneNumber) {
-        return addBooking(new Reservation(date, time, numberOfPeople, name, phoneNumber, getID(), ++bookingID));
+    public Booking getBooking(int bookingID) throws BookingNotFoundException {
+        for (Table table : tables) {
+            for (Booking booking : table.getBookings()) {
+                if (booking.getBookingID() == bookingID) return booking;
+            }
+        }
+        throw new BookingNotFoundException("Error: Could not find a booking with the specified ID");
+    }
+
+    public Booking getBooking(LocalDate date, LocalTime time, String phoneNumber) throws BookingNotFoundException {
+        for (Table table : tables) {
+            for (Booking booking: table.getBookings()) {
+                if (booking.getDate().isEqual(date) && booking.getStartTime().equals(time) && ((Reservation) booking).getPhoneNumber().equals(phoneNumber)) {
+                    return booking;
+                }
+            }
+        }
+        throw new BookingNotFoundException("Error: Could not find a booking with the specified ID");
     }
 
     public void updateBooking(int bookingID) {
 
     }
 
-    private boolean addBooking(Booking booking) {
-        for (Table table : tables) {
-            if (table.addBooking(booking)) return true;
+    public ArrayList<Reservation> getAvailableReservations(int numberOfPeople) {
+        ArrayList<Reservation> availableReservations = new ArrayList<>();
+        LocalDate startDate = LocalDate.now();
+        LocalTime startTime = LocalTime.now();
+        if (startTime.getHour() <= 17) {
+            for (int i = Math.max(startTime.getHour(), 12); i <= 20; i++) {
+                for (Table table : tables) {
+                    if (table.freeAtTime(startDate, startTime))
+                        availableReservations.add(new Reservation(startDate, LocalTime.of(i, 0), numberOfPeople, table.getID(), getID()));
+                }
+            }
         }
-        return false;
+        startDate = startDate.plusDays(1);
+        for (int i = 0; i <= 14; i++) {
+            for (int j = 12; j <= 20; j++) {
+                LocalTime time = LocalTime.of(j, 0);
+                for (Table table : tables) {
+                    if (table.freeAtTime(startDate, time)) {
+                        availableReservations.add(new Reservation(startDate, time, numberOfPeople, table.getID(), getID()));
+                    }
+                }
+            }
+            startDate = startDate.plusDays(1);
+        }
+        return availableReservations;
     }
 
-    public ArrayList<Menu> getMenu(){
+    public ArrayList<Menu> getMenu() {
         return menu;
     }
 
-    public void addMenu (int ID, String category, String item, int price ){
+    public void addMenu(int ID, String category, String item, int price) {
         menu.add(new Menu(ID, category, item, price));
-
-    }
-
-    public ArrayList<Integer> getAvailableTimes(LocalDate date, int numberOfPeople) {
-        int i = LocalTime.now().getHour();
-        if (LocalDate.now().isEqual(date) && i < 12) i = 12;
-        ArrayList<Integer> freeHours = new ArrayList<>();
-        while (i <= 20) {
-            LocalTime hour = LocalTime.of(i, 0);
-            for (Table table : tables) {
-                if (table.freeAtTime(date, hour) && numberOfPeople <= table.getCapacity()) freeHours.add(i);
-            }
-            i++;
-        }
-        return freeHours;
     }
 
     @Override

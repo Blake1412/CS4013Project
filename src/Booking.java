@@ -6,15 +6,22 @@ public abstract class Booking {
     private LocalTime startTime;
     private LocalTime endTime;
     private int numberOfPeople;
-    private int tableID = -1;
-    private final int restaurantID;
-    private final int bookingID;
+    private int tableID;
+    private int restaurantID;
+    private int bookingID;
 
-    public Booking(LocalDate date, LocalTime startTime, int numberOfPeople, int restaurantID, int bookingID) {
+    protected Booking(LocalDate date, LocalTime startTime, int numberOfPeople, int tableID, int restaurantID) {
         this.date = date;
         this.startTime = startTime;
-        this.endTime = startTime.plusHours(2);
+        endTime = startTime.plusHours(2);
         this.numberOfPeople = numberOfPeople;
+        this.tableID = tableID;
+        this.restaurantID = restaurantID;
+    }
+
+    protected Booking(LocalDate date, LocalTime startTime, int numberOfPeople, int tableID, int restaurantID, int bookingID) {
+        this(date, startTime, numberOfPeople, tableID, restaurantID);
+        this.tableID = tableID;
         this.restaurantID = restaurantID;
         this.bookingID = bookingID;
     }
@@ -33,7 +40,7 @@ public abstract class Booking {
 
     public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
-        this.endTime = startTime.plusMinutes(90);
+        this.endTime = startTime.plusHours(2);
     }
 
     public LocalTime getEndTime() {
@@ -60,8 +67,16 @@ public abstract class Booking {
         return restaurantID;
     }
 
+    public void setRestaurantID(int restaurantID) {
+        this.restaurantID = restaurantID;
+    }
+
     public int getBookingID() {
         return bookingID;
+    }
+
+    public void setBookingID(int bookingID) {
+        this.bookingID = bookingID;
     }
 
     @Override

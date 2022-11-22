@@ -33,14 +33,8 @@ public class Table {
         return bookings;
     }
 
-    public boolean addBooking(Booking bookingOne) {
-        for (Booking bookingTwo : bookings) {
-            if (Utils.timeOverlap(bookingOne.getStartTime(), bookingOne.getEndTime(), bookingTwo.getStartTime(), bookingTwo.getEndTime()))
-                return false;
-        }
-        bookings.add(bookingOne);
-        bookingOne.setTableID(getID());
-        return true;
+    public void addBooking(Booking booking) {
+        bookings.add(booking);
     }
 
     public boolean freeAtTime(LocalDate date, LocalTime time) {

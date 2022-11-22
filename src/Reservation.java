@@ -1,15 +1,17 @@
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-
 public class Reservation extends Booking {
 
     private String name;
     private String phoneNumber;
 
+    public Reservation(LocalDate date, LocalTime startTime, int numberOfPeople, int tableID, int restaurantID) {
+        super(date, startTime, numberOfPeople, tableID, restaurantID);
+    }
 
-    public Reservation(LocalDate date, LocalTime startTime, int numberOfPeople, String name, String phoneNumber, int restaurantID, int reservationID) {
-        super(date, startTime, numberOfPeople, reservationID, reservationID);
+    public Reservation(LocalDate date, LocalTime startTime, int numberOfPeople, String name, String phoneNumber, int tableID, int restaurantID, int bookingID) {
+        super(date, startTime, numberOfPeople, tableID, restaurantID, bookingID);
         this.name = name;
         this.phoneNumber = phoneNumber;
     }
