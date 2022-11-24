@@ -24,7 +24,7 @@ public class Restaurant {
     private String phoneNumber;
     private int bookingID = 0;
     private final ArrayList<Table> tables = new ArrayList<>();
-    private ArrayList<Menu> menu = new ArrayList<>();
+    private ArrayList<Menu> menus = new ArrayList<>();
     private FileWriter writer;
 
     /**
@@ -331,13 +331,13 @@ public class Restaurant {
         throw new Exception("Could not find a free table");
     }
 
-    public ArrayList<Menu> getMenu() {
-        return menu;
+    public ArrayList<Menu> getMenus() {
+        return menus;
     }
 
-    public void addMenu(int ID, String category, String item, int price) {
+    /*public void addMenu(int ID, String category, String item, int price) {
         menu.add(new Menu(ID, category, item, price));
-    }
+    }*/
 
     @Override
     public String toString() {

@@ -13,6 +13,7 @@ public class Table {
     private int ID;
     private int capacity;
     private final ArrayList<Booking> bookings = new ArrayList<>();
+    private Order order;
 
     /**
      * Creates a table with the specified ID and capacity
@@ -96,6 +97,18 @@ public class Table {
         bookings.remove(booking);
     }
 
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public void markOrderComplete() {
+        order = null;
+    }
+
     /**
      * Returns whether a table is free for a booking at a certain time.
      *
@@ -110,5 +123,10 @@ public class Table {
                 Utils.timeOverlap(time, time.plusHours(2), booking.getStartTime(), booking.getEndTime())) return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ID: %d, Capacity: %d", getID(), getCapacity());
     }
 }
