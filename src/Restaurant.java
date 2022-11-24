@@ -28,7 +28,7 @@ public class Restaurant {
     private FileWriter writer;
 
     /**
-     * Makes a default restaurant with the specified ID, name, address and phone number.
+     * Makes a default restaurant with the specified ID, name, address and phone number. Also loads pre-existing data from csv files.
      *
      * @param ID          ID of the restaurant
      * @param name        Name of the restaurant
@@ -36,12 +36,27 @@ public class Restaurant {
      * @param phoneNumber Phone number of the restaurant
      * @author Blake
      */
-
     public Restaurant(int ID, String name, String address, String phoneNumber) {
         this.ID = ID;
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
+
+        Utils.fileReader("Tables.csv").forEach(values -> {
+            if (Integer.parseInt(values[0]) == getID()) {
+                tables.add(new Table(Integer.parseInt(values[1]), Integer.parseInt(values[2])));
+            }
+        });
+
+        Utils.fileReader("Reservations.csv").forEach(values -> {
+            bookingID = Integer.parseInt(values[5]);
+            int tableID = Integer.parseInt(values[3]);
+            if (Integer.parseInt(values[4]) == getID()) {
+                Reservation reservation = new Reservation(LocalDate.parse(values[0]), LocalTime.parse(values[1]), Integer.parseInt(values[2]),
+                                                          Integer.parseInt(values[3]), getID(), bookingID);
+                tables.get(tableID).addBooking(reservation);
+            }
+        });
     }
 
 
@@ -144,14 +159,7 @@ public class Restaurant {
      */
     public void addTable(int ID, int capacity) {
         tables.add(new Table(ID, capacity));
-
-        try {
-            writer = new FileWriter("Tables.csv", true);
-            writer.write(String.format("%d,%d,%d\n", getID(), ID, capacity));
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Utils.fileWriter("Tables.csv", String.valueOf(getID()), String.valueOf(ID), String.valueOf(capacity));
     }
 
     /**
@@ -192,6 +200,10 @@ public class Restaurant {
     public void addBooking(Booking booking) {
         booking.setBookingID(++bookingID);
         tables.get(booking.getTableID()).addBooking(booking);
+        if (booking instanceof Reservation) {
+            Utils.fileWriter("Reservations.csv", booking.getDate().toString(), booking.getStartTime().toString(), String.valueOf(booking.getNumberOfPeople()),
+                                                 String.valueOf(booking.getTableID()), String.valueOf(getID()), String.valueOf(booking.getBookingID()));
+        }
     }
 
     /**

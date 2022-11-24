@@ -1,9 +1,7 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * File for any utility methods used throughout the code base
@@ -40,6 +38,7 @@ public class Utils {
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
+            br.readLine();
             while ((string = br.readLine()) != null) {
                 String[] line = string.split(",");
                 data.add(line);
@@ -50,5 +49,22 @@ public class Utils {
             System.out.println("Could not read this file: " + fileName);
         }
         return data;
+    }
+
+    /**
+     * Appends a list of values to a csv file
+     *
+     * @param fileName The name of the file to write to
+     * @param values   The values to be appended to the file
+     * @author Blake
+     */
+    public static void fileWriter(String fileName, String... values) {
+        try {
+            FileWriter fileWriter = new FileWriter(fileName, true);
+            fileWriter.write(Arrays.toString(values).replace("[", "").replace("]", "").replace(", ", ",") + "\n");
+            fileWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

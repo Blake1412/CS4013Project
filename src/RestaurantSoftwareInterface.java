@@ -281,10 +281,11 @@ public class RestaurantSoftwareInterface {
                                 """);
         }
 
+        LinkedHashSet<LocalTime> times = new LinkedHashSet<>();
+        reservations.forEach(reservation -> times.add(reservation.getStartTime()));
+
         System.out.println("Please select an available time");
-        LocalTime time = (LocalTime) getSelection(reservations.stream()
-                                                              .map(Reservation::getStartTime)
-                                                              .collect(Collectors.toCollection(ArrayList::new)));
+        LocalTime time = (LocalTime) getSelection(new ArrayList<>(times));
 
         return reservations.stream()
                            .filter(res -> res.getStartTime().equals(time))

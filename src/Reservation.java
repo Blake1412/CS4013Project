@@ -19,9 +19,26 @@ public class Reservation extends Booking {
      * @param numberOfPeople The number of people for the reservation
      * @param tableID        The table ID the reservation is set for
      * @param restaurantID   The restaurant ID the reservation is in
+     * @author Blake
      */
     public Reservation(LocalDate date, LocalTime startTime, int numberOfPeople, int tableID, int restaurantID) {
         super(date, startTime, numberOfPeople, tableID, restaurantID);
+    }
+
+    /**
+     * Creates a Booking with the specified date, start time, number of people, table ID, restaurant ID and booking ID
+     *
+     * @param date           The date of the reservation
+     * @param startTime      The time of the reservation
+     * @param numberOfPeople The number of people for the reservation
+     * @param tableID        The table ID the reservation is set for
+     * @param restaurantID   The restaurant ID the reservation is in
+     * @param bookingID      The booking ID of the reservation
+     * @author Blake
+     */
+    public Reservation(LocalDate date, LocalTime startTime, int numberOfPeople, int tableID, int restaurantID, int bookingID) {
+        super(date, startTime, numberOfPeople, tableID, restaurantID);
+        setBookingID(bookingID);
     }
 
     /**
