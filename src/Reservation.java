@@ -35,6 +35,7 @@ public class Reservation extends Booking {
     @Override
     public String toString() {
         return String.format("""
+                             Reservation
                              Date: %s
                              Time: %s
                              Number of People: %s

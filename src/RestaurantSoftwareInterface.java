@@ -38,6 +38,9 @@ public class RestaurantSoftwareInterface {
         switch (scanner.next().toUpperCase()) {
             case "A" -> displayMakeReservationPage();
             case "B" -> displayFindReservationPage();
+            case "C" -> displayStaffLoginPage();
+            case "D" -> displayRestaurantSelectionPage();
+            case "Z" -> System.exit(0);
         }
     }
 
@@ -129,6 +132,59 @@ public class RestaurantSoftwareInterface {
             }
             case "C" -> displayRestaurantHomepage();
             case "Z" -> System.exit(0);
+        }
+    }
+
+    private void displayStaffLoginPage() {
+        System.out.println("Enter your username");
+        String username = scanner.next();
+        System.out.println("Enter your password");
+        String password = scanner.next();
+        if (staffLogin(username, password)) {
+            System.out.println("Login successful");
+            displayStaffHomepage();
+        } else {
+            System.out.println("""
+                               Incorrect username or password
+                               A) Retry
+                               B) Cancel
+                               """);
+            switch (scanner.next().toUpperCase()) {
+                case "A" -> displayStaffLoginPage();
+                case "B" -> displayRestaurantHomepage();
+            }
+        }
+    }
+
+    private void displayStaffHomepage() {
+        System.out.println("""
+                           What would you like to do?
+                           A) Take Walk-In
+                           B) View Orders
+                           C) Logout
+                           Z) Exit
+                           """);
+
+        switch (scanner.next().toUpperCase()) {
+            case "A" -> displayTakeWalkInPage();
+            case "C" -> displayRestaurantHomepage();
+            case "Z" -> System.exit(0);
+        }
+    }
+
+    private void displayTakeWalkInPage() {
+        System.out.println("Enter number of people");
+        int numberOfPeople = scanner.nextInt();
+        try {
+            WalkIn walkIn = restaurant.getWalkIn(numberOfPeople);
+            System.out.printf("""
+                               Table found, booking details:
+                               %s""", walkIn);
+            restaurant.addBooking(walkIn);
+            displayStaffHomepage();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            displayStaffHomepage();
         }
     }
 

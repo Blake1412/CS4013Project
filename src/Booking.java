@@ -1,5 +1,6 @@
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public abstract class Booking {
     private LocalDate date;
@@ -82,12 +83,11 @@ public abstract class Booking {
     @Override
     public String toString() {
         return String.format("""
-                             Reservation
                              Date: %s
                              Time: %s
                              Number of People: %d
                              Table number: %d
                              
-                             """, date, startTime, numberOfPeople, tableID);
+                             """, date, startTime.format(DateTimeFormatter.ofPattern("HH:mm")), numberOfPeople, tableID);
     }
 }

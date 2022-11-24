@@ -162,6 +162,17 @@ public class Restaurant {
         return availableReservations;
     }
 
+    public WalkIn getWalkIn(int numberOfPeople) throws Exception{
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
+        for (Table table : tables) {
+            if (table.getCapacity() >= numberOfPeople && table.freeAtTime(date, time)) {
+                return new WalkIn(date, time, numberOfPeople, table.getID(), getID());
+            }
+        }
+        throw new Exception("Could not find a free table");
+    }
+
     public ArrayList<Menu> getMenu() {
         return menu;
     }
