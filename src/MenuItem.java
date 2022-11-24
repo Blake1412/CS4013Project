@@ -25,6 +25,6 @@ public class MenuItem {
 
     @Override
     public String toString() {
-        return String.format("%s - %.2f", description, price);
+        return String.format("%s - €%.2f", description, price);
     }
 }

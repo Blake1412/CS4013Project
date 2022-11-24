@@ -25,6 +25,6 @@ public class Order {
 
     @Override
     public String toString() {
-        return String.format("> %s", items.toString().replace("[", "").replace("]", "").replace(", ", "\n"));
+        return String.format("%s", items.toString().replace("[", ">").replace("]", "").replace(", ", "\n>"));
     }
 }

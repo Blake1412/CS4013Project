@@ -7,26 +7,52 @@ import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * UI class for the restaurant software. Takes in an ArrayList of restaurants and starts the UI through the run() method.
+ *
+ * @author Blake
+ */
 public class RestaurantSoftwareInterface {
     private final ArrayList<Restaurant> restaurants;
     private final Scanner scanner;
     private Restaurant restaurant;
 
+    /**
+     * Constructs a software instance with the given restaurant list
+     *
+     * @param restaurants The chain of restaurants that the software will work with
+     * @author Blake
+     */
     public RestaurantSoftwareInterface(ArrayList<Restaurant> restaurants) {
         this.restaurants = restaurants;
         scanner = new Scanner(System.in);
     }
 
+    /**
+     * Launches the software
+     *
+     * @author Blake
+     */
     public void run() {
         displayRestaurantSelectionPage();
     }
 
+    /**
+     * Displays the opening page where the user will select which restaurant they wish to continue with
+     *
+     * @author Blake
+     */
     private void displayRestaurantSelectionPage() {
         System.out.println("Welcome to Yum's restaurant chain!\nPlease Select a restaurant below:\n");
         restaurant = getRestaurant();
         displayRestaurantHomepage();
     }
 
+    /**
+     * Displays the home page for the selected restaurant
+     *
+     * @author Blake
+     */
     private void displayRestaurantHomepage() {
         System.out.println("""
                            What would you like to do?
@@ -44,6 +70,11 @@ public class RestaurantSoftwareInterface {
         }
     }
 
+    /**
+     * Displays the page used to make reservations
+     *
+     * @author Blake
+     */
     private void displayMakeReservationPage() {
         try {
             Reservation reservation = getReservation();
@@ -70,6 +101,11 @@ public class RestaurantSoftwareInterface {
         }
     }
 
+    /**
+     * Displays the page used to find a reservation in the system
+     *
+     * @author Blake
+     */
     private void displayFindReservationPage() {
         Reservation reservation;
         System.out.println("""
@@ -135,6 +171,11 @@ public class RestaurantSoftwareInterface {
         }
     }
 
+    /**
+     * Displays the page used to log in as a staff member
+     *
+     * @author Blake
+     */
     private void displayStaffLoginPage() {
         System.out.println("Enter your username");
         String username = scanner.next();
@@ -156,30 +197,56 @@ public class RestaurantSoftwareInterface {
         }
     }
 
+    /**
+     * Displays the homepage for a logged in staff member
+     *
+     * @author Blake
+     */
     private void displayStaffHomepage() {
         System.out.println("""
                            What would you like to do?
                            A) Take Walk-In
-                           B) View Orders
-                           C) Logout
+                           B) Add order
+                           C) Complete order for table
+                           D) Logout
                            Z) Exit
                            """);
 
         switch (scanner.next().toUpperCase()) {
             case "A" -> displayTakeWalkInPage();
-            case "C" -> displayRestaurantHomepage();
+            case "B" -> {
+                System.out.println("Please select a table");
+                Table table = (Table) getSelection(restaurant.getTables());
+                Order order = displayCreateOrderPage(new Order());
+                table.setOrder(order);
+                displayStaffHomepage();
+            }
+            case "C" -> {
+                System.out.println("Please select a table");
+                ((Table) getSelection(new ArrayList<>(restaurant.getTables().stream()
+                                                                .filter(table -> table.getOrder() != null)
+                                                                .collect(Collectors.toList())))).completeOrder("Card");
+                System.out.println("Order completed!");
+                displayStaffHomepage();
+            }
+            case "D" -> displayRestaurantHomepage();
             case "Z" -> System.exit(0);
         }
     }
 
+    /**
+     * Displays the staff page to take a walk in customer
+     *
+     * @author Blake
+     */
     private void displayTakeWalkInPage() {
         System.out.println("Enter number of people");
         int numberOfPeople = scanner.nextInt();
         try {
             WalkIn walkIn = restaurant.getWalkIn(numberOfPeople);
             System.out.printf("""
-                               Table found, booking details:
-                               %s""", walkIn);
+                              Table found, booking details:
+                              %s""", walkIn);
             restaurant.addBooking(walkIn);
             displayStaffHomepage();
         } catch (Exception e) {
@@ -188,6 +255,53 @@ public class RestaurantSoftwareInterface {
         }
     }
 
+    /**
+     * Displays the staff page to create an order for a table
+     *
+     * @param order The order to be edited
+     * @return The new order
+     * @author Blake
+     */
+    private Order displayCreateOrderPage(Order order) {
+        System.out.printf("""
+                          %s
+                                                     
+                          Create an order
+                          A) Add item
+                          B) Remove item
+                          C) Confirm order
+                          Z) Cancel
+                                                     
+                          """, order);
+
+        switch (scanner.next().toUpperCase()) {
+            case "A" -> {
+                System.out.println("Select a menu");
+                Menu menu = (Menu) getSelection(restaurant.getMenus());
+                System.out.println("Select an item");
+                order.addItem((MenuItem) getSelection(menu.getItems()));
+                displayCreateOrderPage(order);
+            }
+            case "B" -> {
+                System.out.println("Select an item to remove");
+                order.removeItem((MenuItem) getSelection(order.getItems()));
+                displayCreateOrderPage(order);
+            }
+            case "C" -> {
+                return order;
+            }
+            case "Z" -> displayStaffHomepage();
+        }
+
+        return order;
+    }
+
+    /**
+     * Displays the page for a customer to edit a reservation
+     *
+     * @param reservation The reservation to be edited
+     * @author Blake
+     */
     private void displayEditReservationPage(Reservation reservation) {
         System.out.println("""
                            What would you like to do?
@@ -232,7 +346,12 @@ public class RestaurantSoftwareInterface {
         }
     }
 
-
+    /**
+     * Displays the options/troubleshooting page while making a reservation
+     *
+     * @param message The message to be outputted for troubleshooting
+     * @author Blake
+     */
     private void makeReservationOptionsPage(String message) {
         System.out.println(message);
         System.out.println("""
@@ -247,6 +366,13 @@ public class RestaurantSoftwareInterface {
         }
     }
 
+    /**
+     * Displays the page used to select a reservation from the system
+     *
+     * @return The selected reservation
+     * @throws Exception If the reservation cannot be found
+     * @author Blake
+     */
     private Reservation getReservation() throws Exception {
         System.out.println("Enter the number of people you are making the reservation for\n*We only accept reservations for 2-12 people.*");
         int numberOfPeople = scanner.nextInt();
@@ -293,8 +419,14 @@ public class RestaurantSoftwareInterface {
                            .orElseThrow();
     }
 
-
-    private <T> Object getSelection(ArrayList<T> objects) {
+    /**
+     * Utility method to take a list of any type of object and return a selected object from that list.
+     *
+     * @param objects An ArrayList of any type
+     * @return An selected object from the list
+     * @author Blake
+     */
+    private Object getSelection(ArrayList<?> objects) {
         int selection;
         while (true) {
             for (int i = 0; i < objects.size(); i++) {
@@ -309,6 +441,12 @@ public class RestaurantSoftwareInterface {
         }
     }
 
+    /**
+     * Utility method to get a restaurant from the list of restaurants available
+     *
+     * @return The selected restaurant
+     * @author Blake
+     */
     private Restaurant getRestaurant() {
         while (true) {
             for (int i = 0; i < restaurants.size(); i++) {
@@ -320,6 +458,13 @@ public class RestaurantSoftwareInterface {
     }
 
 
+    /**
+     * Utility method to verify a staff login to the system
+     *
+     * @param username String for the username of the user
+     * @param password String for the password of the user
+     * @return true if the given details match a user on the system, false otherwise
+     */
     private boolean staffLogin(String username, String password) {
         try {
             Scanner loginScanner = new Scanner(new File("StaffLogins.csv"));

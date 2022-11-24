@@ -14,6 +14,7 @@ public class Table {
     private int capacity;
     private final ArrayList<Booking> bookings = new ArrayList<>();
     private Order order;
+    private Bill bill;
 
     /**
      * Creates a table with the specified ID and capacity
@@ -97,16 +98,46 @@ public class Table {
         bookings.remove(booking);
     }
 
+    /**
+     * Gets the order for the table
+     *
+     * @return The order set to the table, may be null if order has not been set
+     * @author Blake
+     */
     public Order getOrder() {
         return order;
     }
 
+    /**
+     * Sets the order for the table
+     *
+     * @param order The order to be set
+     * @author Blake
+     */
     public void setOrder(Order order) {
         this.order = order;
     }
 
-    public void markOrderComplete() {
+    /**
+     * Gets the bill for the table
+     *
+     * @return The bill for the table
+     */
+    public Bill getBill() {
+        return bill;
+    }
+
+    public void setBill(Bill bill) {
+        this.bill = bill;
+    }
+
+    public void completeOrder(String methodOfPayment) {
+        setBill(new Bill(methodOfPayment, order));
         order = null;
+    }
+
+    public void completeBill() {
+
     }
 
     /**

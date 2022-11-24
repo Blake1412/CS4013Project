@@ -37,4 +37,9 @@ public class Menu {
     public void removeItem(MenuItem item) {
         items.remove(item);
     }
+
+    @Override
+    public String toString() {
+        return category;
+    }
 }
